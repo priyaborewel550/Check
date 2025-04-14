@@ -1,204 +1,143 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Priya Borewell - Invoice Calculator</title>
+  <meta charset="UTF-8" />
+  <title>Priya Borewell - Admin Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 20px auto;
+      background: #f8f9fa;
       padding: 20px;
-      background: #f2f2f2;
-      border-radius: 10px;
+    }
+
+    .login-box, .dashboard {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    h1, h2 {
-      text-align: center;
+    .login-box input {
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .login-box button {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
+      margin-top: 20px;
     }
 
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
+      padding: 8px;
     }
 
-    input[type="number"], input[type="text"] {
-      width: 100%;
-      padding: 5px;
-    }
-
-    .result {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .btns {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .calc-btn {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .print-btn {
+    th {
       background-color: #007bff;
       color: white;
     }
 
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .info-section {
-      margin-bottom: 20px;
-    }
-
-    .printable {
+    .hidden {
       display: none;
-    }
-
-    @media print {
-      .no-print {
-        display: none;
-      }
-
-      input {
-        display: none;
-      }
-
-      .printable {
-        display: inline;
-      }
-
-      body {
-        background: white;
-        box-shadow: none;
-      }
-
-      .result {
-        font-size: 16px;
-      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Priya Borewell</h1>
-  <h2>Invoice Calculator</h2>
+<div class="login-box" id="loginBox">
+  <h2>Admin Login</h2>
+  <input type="password" id="password" placeholder="Enter Password" />
+  <button onclick="checkPassword()">Login</button>
+</div>
 
-  <div class="info-section">
-    <label>Party Name:
-      <input type="text" id="partyName" placeholder="Enter party name" oninput="updatePrint('printPartyName', this.value)" />
-      <span class="printable" id="printPartyName"></span>
-    </label><br><br>
-    <label>Address:
-      <input type="text" id="partyAddress" placeholder="Enter address" oninput="updatePrint('printPartyAddress', this.value)" />
-      <span class="printable" id="printPartyAddress"></span>
-    </label>
-  </div>
-
-  <table>
+<div class="dashboard hidden" id="dashboard">
+  <h2>Invoice Records</h2>
+  <table id="invoiceTable">
     <thead>
       <tr>
-        <th>Product Name</th>
-        <th>Rate (per ft)</th>
-        <th>Quantity (ft)</th>
+        <th>Party Name</th>
+        <th>Address</th>
+        <th>Product Details</th>
+        <th>Total</th>
+        <th>Advance</th>
+        <th>Due</th>
+        <th>Payment Mode</th>
+        <th>Received By</th>
+        <th>Date</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td><input type="text" id="name1" value="7 inch Casing" oninput="updatePrint('printName1', this.value)" /><span class="printable" id="printName1"></span></td>
-        <td><input type="number" id="rate1" value="350" oninput="updatePrint('printRate1', this.value)" /><span class="printable" id="printRate1"></span></td>
-        <td><input type="number" id="qty1" value="0" oninput="updatePrint('printQty1', this.value)" /><span class="printable" id="printQty1"></span></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="name2" value="5 inch Casing" oninput="updatePrint('printName2', this.value)" /><span class="printable" id="printName2"></span></td>
-        <td><input type="number" id="rate2" value="150" oninput="updatePrint('printRate2', this.value)" /><span class="printable" id="printRate2"></span></td>
-        <td><input type="number" id="qty2" value="0" oninput="updatePrint('printQty2', this.value)" /><span class="printable" id="printQty2"></span></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="name3" value="Boring" oninput="updatePrint('printName3', this.value)" /><span class="printable" id="printName3"></span></td>
-        <td><input type="number" id="rate3" value="120" oninput="updatePrint('printRate3', this.value)" /><span class="printable" id="printRate3"></span></td>
-        <td><input type="number" id="qty3" value="0" oninput="updatePrint('printQty3', this.value)" /><span class="printable" id="printQty3"></span></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="name4" value="Extra Work" oninput="updatePrint('printName4', this.value)" /><span class="printable" id="printName4"></span></td>
-        <td><input type="number" id="rate4" value="0" oninput="updatePrint('printRate4', this.value)" /><span class="printable" id="printRate4"></span></td>
-        <td><input type="number" id="qty4" value="0" oninput="updatePrint('printQty4', this.value)" /><span class="printable" id="printQty4"></span></td>
-      </tr>
-    </tbody>
+    <tbody></tbody>
   </table>
+</div>
 
-  <label>Advance Payment (₹):
-    <input type="number" id="advance" value="0" oninput="updatePrint('printAdvance', this.value)" />
-    <span class="printable" id="printAdvance"></span>
-  </label>
-  <br><br>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  <div class="btns no-print">
-    <button class="calc-btn" onclick="calculateTotal()">Calculate</button>
-    <button class="print-btn" onclick="window.print()">Print Invoice</button>
-  </div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDTouQp3lyN5vuB7W2D2URlil5vnwLv9SQ",
+    authDomain: "priyaborewel.firebaseapp.com",
+    projectId: "priyaborewel",
+    storageBucket: "priyaborewel.appspot.com",
+    messagingSenderId: "372574129565",
+    appId: "1:372574129565:web:71d8962d4a639c2ef43374"
+  };
 
-  <div class="result" id="output"></div>
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-  <script>
-    function updatePrint(id, value) {
-      document.getElementById(id).innerText = value;
+  const correctPassword = "priya123"; // Change this as needed
+
+  window.checkPassword = () => {
+    const input = document.getElementById('password').value;
+    if (input === correctPassword) {
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      loadInvoices();
+    } else {
+      alert("Incorrect password!");
     }
+  };
 
-    function calculateTotal() {
-      let total = 0;
-      let details = '';
-      const partyName = document.getElementById("partyName").value;
-      const partyAddress = document.getElementById("partyAddress").value;
+  async function loadInvoices() {
+    const querySnapshot = await getDocs(collection(db, "invoice"));
+    const tableBody = document.querySelector("#invoiceTable tbody");
+    tableBody.innerHTML = "";
 
-      for (let i = 1; i <= 4; i++) {
-        const name = document.getElementById(`name${i}`).value;
-        const rate = parseFloat(document.getElementById(`rate${i}`).value) || 0;
-        const qty = parseFloat(document.getElementById(`qty${i}`).value) || 0;
-        const amount = rate * qty;
-        if (qty > 0) {
-          details += `<p>${name}: ₹${rate} x ${qty} ft = ₹${amount.toFixed(2)}</p>`;
-        }
-        total += amount;
-      }
-
-      const advance = parseFloat(document.getElementById('advance').value) || 0;
-      const due = total - advance;
-
-      document.getElementById('output').innerHTML = `
-        <hr>
-        <p><strong>Party Name:</strong> ${partyName || "(Not provided)"}</p>
-        <p><strong>Address:</strong> ${partyAddress || "(Not provided)"}</p>
-        ${details}
-        <p>Total Amount: ₹ ${total.toFixed(2)}</p>
-        <p>Advance Paid: ₹ ${advance.toFixed(2)}</p>
-        <p>Due Amount: ₹ ${due.toFixed(2)}</p>
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${data.partyName || ""}</td>
+        <td>${data.partyAddress || ""}</td>
+        <td>${data.productDetails || ""}</td>
+        <td>${data.total || 0}</td>
+        <td>${data.advance || 0}</td>
+        <td>${data.due || 0}</td>
+        <td>${data.paymentMode || ""}</td>
+        <td>${data.receivedBy || ""}</td>
+        <td>${data.date || ""}</td>
       `;
-    }
-  </script>
+      tableBody.appendChild(row);
+    });
+  }
+</script>
 
 </body>
 </html>
