@@ -2,140 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Priya Borewell - Admin Dashboard</title>
+  <title>Admin Panel - Priya Borewell</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      padding: 20px;
-    }
-
-    .login-box, .dashboard {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .login-box input {
-      padding: 10px;
-      width: 100%;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-
-    .login-box button {
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-
-    th {
-      background-color: #007bff;
-      color: white;
-    }
-
-    .hidden {
-      display: none;
-    }
+    body { font-family: Arial; background: #f2f2f2; padding: 20px; }
+    .section { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; margin-bottom: 20px; }
+    input, button { padding: 10px; margin: 10px 0; width: 100%; box-sizing: border-box; }
+    .btn { background-color: #007bff; color: white; border: none; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #007bff; color: white; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
-<div class="login-box" id="loginBox">
+<div class="section" id="loginSection">
   <h2>Admin Login</h2>
-  <input type="password" id="password" placeholder="Enter Password" />
-  <button onclick="checkPassword()">Login</button>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="password" id="password" placeholder="Password" />
+  <button class="btn" onclick="login()">Login</button>
 </div>
 
-<div class="dashboard hidden" id="dashboard">
-  <h2>Invoice Records</h2>
-  <table id="invoiceTable">
+<div class="section hidden" id="dashboard">
+  <h2>Invoice Dashboard</h2>
+  <table>
     <thead>
       <tr>
-        <th>Party Name</th>
+        <th>Party</th>
         <th>Address</th>
-        <th>Product Details</th>
+        <th>Products</th>
         <th>Total</th>
         <th>Advance</th>
         <th>Due</th>
-        <th>Payment Mode</th>
+        <th>Mode</th>
         <th>Received By</th>
+        <th>Machine Time</th>
         <th>Date</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="invoiceTable"></tbody>
   </table>
 </div>
 
-<!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDTouQp3lyN5vuB7W2D2URlil5vnwLv9SQ",
-    authDomain: "priyaborewel.firebaseapp.com",
-    projectId: "priyaborewel",
-    storageBucket: "priyaborewel.appspot.com",
-    messagingSenderId: "372574129565",
-    appId: "1:372574129565:web:71d8962d4a639c2ef43374"
+    apiKey: "AIzaSyDuJAow6zpH992D3BY3tKndKuomGWKpguc",
+    authDomain: "smstestpuja.firebaseapp.com",
+    projectId: "smstestpuja",
+    storageBucket: "smstestpuja.appspot.com",
+    messagingSenderId: "820605419857",
+    appId: "1:820605419857:web:09e90b3f8ec1796b425370"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const correctPassword = "priya123"; // Change this as needed
+  const correctUsername = "Priyaborewel";
+  const correctPassword = "Priya8084";
 
-  window.checkPassword = () => {
-    const input = document.getElementById('password').value;
-    if (input === correctPassword) {
-      document.getElementById('loginBox').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      loadInvoices();
+  const loginSection = document.getElementById("loginSection");
+  const dashboard = document.getElementById("dashboard");
+
+  function showDashboard() {
+    loginSection.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    sessionStorage.setItem("loggedIn", "true");
+    loadInvoices();
+  }
+
+  function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if (user === correctUsername && pass === correctPassword) {
+      showDashboard();
     } else {
-      alert("Incorrect password!");
+      alert("Invalid login");
     }
-  };
+  }
 
   async function loadInvoices() {
     const querySnapshot = await getDocs(collection(db, "invoice"));
-    const tableBody = document.querySelector("#invoiceTable tbody");
-    tableBody.innerHTML = "";
+    const table = document.getElementById("invoiceTable");
+    table.innerHTML = "";
 
     querySnapshot.forEach((doc) => {
-      const data = doc.data();
+      const d = doc.data();
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${data.partyName || ""}</td>
-        <td>${data.partyAddress || ""}</td>
-        <td>${data.productDetails || ""}</td>
-        <td>${data.total || 0}</td>
-        <td>${data.advance || 0}</td>
-        <td>${data.due || 0}</td>
-        <td>${data.paymentMode || ""}</td>
-        <td>${data.receivedBy || ""}</td>
-        <td>${data.date || ""}</td>
+        <td>${d.partyName}</td>
+        <td>${d.partyAddress}</td>
+        <td><pre>${d.productDetails}</pre></td>
+        <td>₹${d.total}</td>
+        <td>₹${d.advance}</td>
+        <td>₹${d.due}</td>
+        <td>${d.paymentMode}</td>
+        <td>${d.receivedBy}</td>
+        <td>${d.machineStartTime} - ${d.machineEndTime}</td>
+        <td>${d.date}</td>
       `;
-      tableBody.appendChild(row);
+      table.appendChild(row);
     });
+  }
+
+  // Auto-login if session exists
+  if (sessionStorage.getItem("loggedIn") === "true") {
+    showDashboard();
   }
 </script>
 
